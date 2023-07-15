@@ -10,14 +10,16 @@ News List
     <h1>Все новости ({{news_list|length}})</h1>
     <hr>
     {% if news_list %}
-        {% for post in news_list %}
-        <list>
-            <h3>{{ post.header|censor }}</h3>
-            <p>{{ post.time_create|date:'d M Y' }}</p>
-            <p>{{ post.text|truncatechars:20|censor }}</p>
-            <hr>
-        </list>
-        {% endfor %}
+        <ul>
+            {% for post in news_list %}
+                <li>
+                    <h3>{{ post.header|censor }}</h3>
+                    <p>{{ post.time_create|date:'d M Y' }}</p>
+                    <p>{{ post.text|truncatechars:20|censor }}</p>
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
     {% else %}
         <h2>Новостей нет</h2>
     {% endif %}
