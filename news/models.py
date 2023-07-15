@@ -37,6 +37,9 @@ class Post(models.Model):
     text = models.TextField(default='Пост')
     rating = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f"{self.header.title()} : {self.text}, {self.time_create}"
+
     def like(self):
         self.rating += 1
         self.save()

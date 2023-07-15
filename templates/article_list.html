@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+
+{% load my_filters %}
+
+{% block title %}
+Article List
+{% endblock title %}
+
+{% block content %}
+    <h1>Все статьи ({{article_list|length}})</h1>
+    <hr>
+    {% if article_list %}
+        {% for post in article_list %}
+        <list>
+            <h3>{{ post.header|censor }}</h3>
+            <p>{{ post.time_create|date:'d M Y' }}</p>
+            <p>{{ post.text|truncatechars:20|censor }}</p>
+            <hr>
+        </list>
+        {% endfor %}
+    {% else %}
+        <h2>Статей нет</h2>
+    {% endif %}
+{% endblock content %}
