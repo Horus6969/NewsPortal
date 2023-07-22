@@ -3,15 +3,15 @@
 {% load my_filters %}
 
 {% block title %}
-Новости
+Публикации
 {% endblock title %}
 
 {% block content %}
-    <h1>Все новости ({{news_list|length}})</h1>
+    <h1>Все публикации ({{posts|length}})</h1>
     <hr>
-    {% if news_list %}
+    {% if posts %}
         <ul>
-            {% for post in news_list %}
+            {% for post in posts %}
                 <li>
                     <h3>{{ post.header|censor }}</h3>
                     <p>{{ post.time_create|date:'d M Y' }}</p>
@@ -21,7 +21,7 @@
             {% endfor %}
         </ul>
     {% else %}
-        <h2>Новостей нет</h2>
+        <h2>Публикаций нет</h2>
     {% endif %}
 
     {% if page_obj.has_previous %}

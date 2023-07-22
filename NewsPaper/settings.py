@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+
 from django.conf.global_settings import STATICFILES_DIRS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'news',
     'django.contrib.sites',
-    'django.contrib.flatpages'
+    'django.contrib.flatpages',
+    'django_filters',
 ]
 
 SITE_ID = 1

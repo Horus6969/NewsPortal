@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
+from django.urls import reverse
 
 
 class Author(models.Model):
@@ -11,14 +12,21 @@ class Author(models.Model):
     def update_rating(self):
         author_rating_post = Post.objects.filter(author_id=self.pk).aggregate(r1=Coalesce(Sum('rating'), 0))['r1']
         author_rating_comment = Comment.objects.filter(user_id=self.user).aggregate(r2=Coalesce(Sum('rating'), 0))['r2']
-        author_rating_post_comment = Comment.objects.filter(post__author__user=self.user).aggregate(r3=Coalesce(Sum('rating'), 0))['r3']
+        author_rating_post_comment = \
+        Comment.objects.filter(post__author__user=self.user).aggregate(r3=Coalesce(Sum('rating'), 0))['r3']
 
-        self.rating = author_rating_post*3 + author_rating_comment + author_rating_post_comment
+        self.rating = author_rating_post * 3 + author_rating_comment + author_rating_post_comment
         self.save()
+
+    def __str__(self):
+        return self.user.username
 
 
 class Category(models.Model):
     name = models.CharField(max_length=70, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
@@ -50,6 +58,9 @@ class Post(models.Model):
 
     def preview(self):
         return self.text[:124] + '...' if len(self.text) > 124 else self.text
+
+    def get_absolute_url(self):
+        return reverse('posts')
 
 
 class PostCategory(models.Model):
