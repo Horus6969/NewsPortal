@@ -1,9 +1,11 @@
 from datetime import datetime
 
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from .forms import PostForm
+from .forms import PostForm, UserForm
 from .models import Post
 from .filters import PostFilter
 
@@ -61,10 +63,12 @@ class ArticlesDetail(DetailView):
     context_object_name = 'article'
 
 
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_create.html'
+
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -75,13 +79,20 @@ class PostCreate(CreateView):
         return super().form_valid(form)
 
 
-class PostUpdate(UpdateView):
+class PostUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_create.html'
 
+class AuthorUpdate(LoginRequiredMixin, UpdateView):
+    form_class = UserForm
+    model = User
+    template_name = 'author.html'
+    context_object_name = 'author'
 
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('posts')

@@ -1,7 +1,8 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .models import Post
+from .models import Post, Author
 
 
 class PostForm(forms.ModelForm):
@@ -33,3 +34,12 @@ class PostForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+
+        fields = ['username',
+                  'password',
+                  'email'
+                  ]
