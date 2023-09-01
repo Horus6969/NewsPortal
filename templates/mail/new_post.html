@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новый пост</title>
+</head>
+<body>
+  <h1>Новый пост в категории {{category}}</h1>
+  <a href="http://127.0.0.1:8000/posts{% url 'news:post_detail' post.id %}"></a>
+  {{post.preview}}
+</body>
+</html>
