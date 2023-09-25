@@ -21,10 +21,12 @@ class Posts(ListView):
     context_object_name = 'posts'
     paginate_by = 10
 
+
 class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
+
 
 class PostSearch(ListView):
     model = Post
@@ -65,6 +67,7 @@ class ArticlesList(ListView):
     context_object_name = 'articles_list'
     paginate_by = 10
 
+
 class ArticlesDetail(DetailView):
     queryset = Post.objects.filter(type_post='AR')
     template_name = 'article.html'
@@ -76,7 +79,6 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'post_create.html'
-
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -93,17 +95,20 @@ class PostUpdate(PermissionRequiredMixin, UpdateView):
     model = Post
     template_name = 'post_create.html'
 
+
 class AuthorUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserForm
     model = User
     template_name = 'author.html'
     context_object_name = 'author'
 
+
 class PostDelete(PermissionRequiredMixin, DeleteView):
     permission_required = ('news.delete_post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('posts')
+
 
 class CategoryList(ListView):
     model = Post
@@ -124,6 +129,7 @@ class CategoryList(ListView):
         context['category'] = self.category
         return context
 
+
 @login_required
 def subscribe(request, pk):
     user = request.user
@@ -142,7 +148,7 @@ def subscribe(request, pk):
     msg = EmailMultiAlternatives(
         subject=f"Подписка на категорию {category}",
         body='',
-        from_email='k1rkir69@yandex.ru',
+        from_email='DEFAULT_FROM_EMAIL',
         to=[email, ]
     )
     msg.attach_alternative(html, 'text/html')
@@ -150,6 +156,7 @@ def subscribe(request, pk):
     msg.send()
 
     return redirect('posts')
+
 
 @login_required
 def unsubscribe(request, pk):
