@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -12,6 +10,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .forms import PostForm, UserForm
 from .models import Post, Category
 from .filters import PostFilter
+from .tasks import notify_new_post
 
 
 class Posts(ListView):
@@ -86,6 +85,8 @@ class PostCreate(PermissionRequiredMixin, CreateView):
             post.type_post = 'NW'
         else:
             post.type_post = 'AR'
+        post.save()
+        notify_new_post.delay(post.pk)
         return super().form_valid(form)
 
 
@@ -164,3 +165,4 @@ def unsubscribe(request, pk):
     category = Category.objects.get(id=pk)
     category.subscribers.remove(user)
     return redirect('posts')
+
