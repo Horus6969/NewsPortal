@@ -37,6 +37,7 @@ def notify_new_post(pk):
 
     msg.send()
 
+
 @shared_task
 def weekly_send():
     today = datetime.datetime.now()
@@ -44,10 +45,6 @@ def weekly_send():
     posts = Post.objects.filter(time_create__gte=last_week)
     categories = set(posts.values_list('category__name', flat=True))
     subscribers = set(Category.objects.filter(name__in=categories).values_list('subscribers__email', flat=True))
-    print(today)
-    print(last_week)
-    print(posts)
-    print(subscribers)
     html_content = render_to_string(
         'mail/daily_post.html',
         {

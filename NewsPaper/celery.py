@@ -7,12 +7,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'NewsPaper.settings')
 app = Celery('NewsPaper')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-app.autodiscover_tasks()
-
 app.conf.beat_schedule = {
     'send_every_monday_8am': {
-        'task': news.tasks.weekly_send,
-        'schedule': crontab(hour='21', minute='39', day_of_week='7'),
-
-    }
+        'task': 'news.tasks.weekly_send',
+        'schedule': crontab(hour=8, minute=0, day_of_week='monday'),
+    },
 }
+
+app.autodiscover_tasks()

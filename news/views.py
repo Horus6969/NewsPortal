@@ -165,4 +165,3 @@ def unsubscribe(request, pk):
     category = Category.objects.get(id=pk)
     category.subscribers.remove(user)
     return redirect('posts')
-
