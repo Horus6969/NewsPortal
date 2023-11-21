@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
@@ -13,7 +14,7 @@ class Author(models.Model):
         author_rating_post = Post.objects.filter(author_id=self.pk).aggregate(r1=Coalesce(Sum('rating'), 0))['r1']
         author_rating_comment = Comment.objects.filter(user_id=self.user).aggregate(r2=Coalesce(Sum('rating'), 0))['r2']
         author_rating_post_comment = \
-        Comment.objects.filter(post__author__user=self.user).aggregate(r3=Coalesce(Sum('rating'), 0))['r3']
+            Comment.objects.filter(post__author__user=self.user).aggregate(r3=Coalesce(Sum('rating'), 0))['r3']
 
         self.rating = author_rating_post * 3 + author_rating_comment + author_rating_post_comment
         self.save()
@@ -46,6 +47,8 @@ class Post(models.Model):
     text = models.TextField(default='Пост')
     rating = models.IntegerField(default=0)
 
+    def get_category(self):
+        return ",".join([str(p) for p in self.category.all()])
     def __str__(self):
         return f"{self.header.title()} : {self.text}, {self.time_create}"
 
@@ -63,15 +66,19 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('posts')
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(f'product-{self.pk}')
+
 
 class PostCategory(models.Model):
-    post = models.ForeignKey(Post, null=True, on_delete=models.SET_NULL)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    post = models.ForeignKey(Post, null=True, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.PROTECT)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.CharField(max_length=2000)
     time_create = models.DateTimeField(auto_now_add=True)
     rating = models.IntegerField(default=0)
